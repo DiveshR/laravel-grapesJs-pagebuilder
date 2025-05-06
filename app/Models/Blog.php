@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Blog extends Model implements HasMedia
 {
@@ -26,19 +27,24 @@ class Blog extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
-    // Optional: Define media collections if you want specific conversions or settings
-    // public function registerMediaCollections(): void
-    // {
-    //     $this->addMediaCollection('images'); // A general collection for blog content images
-    //     // $this->addMediaCollection('featured_image')->singleFile(); // For a single featured image
-    // }
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('blog_images')
+             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']);
+             // You could also define that this collection should generate the thumb conversion by default
+             // ->registerMediaConversions(function (Media $media = null) {
+             //     $this->addMediaConversion('thumb')
+             //         ->width(150)
+             //         ->height(150);
+             // });
+    }
 
-    // Optional: Define media conversions
-    // public function registerMediaConversions(Media $media = null): void
-    // {
-    //     $this->addMediaConversion('thumb')
-    //           ->width(368)
-    //           ->height(232)
-    //           ->sharpen(10);
-    // }
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+              ->width(150) // Example width
+              ->height(150) // Example height
+              ->sharpen(5) // Example sharpen value
+              ->nonQueued(); // Process immediately
+    }
 }

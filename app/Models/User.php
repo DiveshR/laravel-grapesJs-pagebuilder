@@ -57,13 +57,4 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(Blog::class);
     }
-
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-              ->width(150)
-              ->height(150)
-              ->sharpen(5)
-              ->nonQueued();
-    }
 }

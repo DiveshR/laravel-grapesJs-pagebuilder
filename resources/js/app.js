@@ -21,17 +21,23 @@ const grapesJsConfigBase = {
     },
     // Asset Manager configuration
     assetManager: {
-        // The `upload` endpoint configuration
-        upload: '/media/upload', // Your Laravel upload route
-        uploadName: 'files', // The name of the file input field in the request (Laravel expects files[])
-        // GrapesJS by default sends 'files[]', but our backend expects 'files' as an array.
-        // We can use `params` to ensure correct naming if needed, or adjust backend.
-        // For now, assuming 'files' will work as backend expects an array for `request->file('files')`.
+        upload: '/media/upload',
+        uploadName: 'files',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
-        assets: '/media/assets', // Endpoint to load existing assets (Uncommented and set)
-        autoAdd: 1, // Add uploaded files to the Asset Manager automatically
+        // Dynamically add blog_id to upload params if on a blog edit page
+        params: { 
+            // This is a bit naive, relies on URL structure like /blogs/ID/edit
+            // A more robust way might be to have blog_id in a hidden input or data attribute
+            blog_id: (() => {
+                const path = window.location.pathname;
+                const match = path.match(/\/blogs\/(\d+)\/edit/);
+                return match ? match[1] : null;
+            })()
+        },
+        assets: '/media/assets',
+        autoAdd: 1,
     },
 };
 
